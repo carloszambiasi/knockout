@@ -1,0 +1,70 @@
+<!DOCTYPE html> 
+<html lang=pt> 
+
+<head>  
+	<meta charset="utf-8"> 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+	<meta name="viewport" content="width=device-width,initial-scale=1"> 
+	
+	<title>Meu Perfil</title>  
+
+	<link rel="stylesheet" href="bootstrap-3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body id="fundo">
+
+		<h1 style="color: aliceblue;">Meu Perfil</h1>
+
+	<div id="wide" class="container">
+
+	<div class="container">
+
+		<img class="imagem" src="https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg"></img>
+
+		<p style="color: aliceblue;">Nome: <strong data-bind="text: firstName"></strong></p>
+		<p style="color: aliceblue;">Sobrenome: <strong data-bind="text: lastName"></strong></p>
+		<p style="color: aliceblue;">Nome Completo: <strong data-bind="text: fullName"></strong></p>
+		
+	</div>
+	
+	<div class="container">
+	<form>
+			<div style="width: 50%;" class="form-group">
+				<label style="color: aliceblue;" for="firstNameInput">Nome</label>
+				<input type="text" style="margin: auto;" class="form-control" id="firstNameInput" placeholder="First Name" data-bind="value: firstName">
+			</div>
+			<div style="width: 50%;"class="form-group">
+				<label style="color: aliceblue;" for="lastNameInput">Sobrenome</label>
+				<input type="text" style="margin: auto;" class="form-control" id="lastNameInput" placeholder="Last Name" data-bind="value: lastName">
+			</div>
+			<button style="color: aliceblue;" class="btn btn-primary" data-bind="click: capitalizeLastName">Maiúsculo</button>
+			<a class="btn btn-primary" id="botao" href="index.html">Voltar</a>
+		</form>
+	</div>
+	
+	</div>
+	
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="bootstrap-3.3.6/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/knockout-3.4.0.js"></script>
+
+    <script type="text/javascript">
+		function AppViewModel() {
+		    this.firstName = ko.observable("James");
+		    this.lastName = ko.observable("G");
+		    this.fullName = ko.computed(function () {
+		        return this.firstName() + " " + this.lastName();
+		    }, this);
+		    
+		    this.capitalizeLastName = function() {
+		        var currentVal = this.lastName();
+		        this.lastName(currentVal.toUpperCase());
+		    };
+		}
+		ko.applyBindings(new AppViewModel());
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html> 
+<html lang=pt> 
+
+<head>  
+	<meta charset="utf-8"> 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+	<meta name="viewport" content="width=device-width,initial-scale=1"> 
+	<title>E-Mail</title>  
+	<link rel="stylesheet" href="bootstrap-3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/style.css">
+</head>
+<body id="fundo">
+<div class="container">
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-menu" aria-expanded="false">
+                    <span class="sr-only">Toggle</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <span class="navbar-brand">E-mail</span> 
+            </div>
+            <div class="collapse navbar-collapse" id="header-menu">
+                <ul class="nav navbar-nav" data-bind="foreach: sections">
+                    <li data-bind="css: { active: $data == $root.chosenSectionId() },
+								   click: $root.goToSection">
+						<a data-bind="text: $data" ></a>
+					</li>
+                </ul>
+            </div>
+    	</div>
+    </nav>
+
+    <div class="container">
+		<table class="table table-striped" data-bind="with: chosenSectionData">
+		    <thead style="color: aliceblue;"><tr><th>De</th><th>Para</th><th>Assunto</th><th>Data</th></tr></thead>
+		    <tbody data-bind="foreach: mails">
+		        <tr style="color: aliceblue; background-color: gray;" data-bind="click: $root.goToMail">
+		            <td data-bind="text: from"></td>
+		            <td data-bind="text: to"></td>
+		            <td data-bind="text: subject"></td>
+		            <td data-bind="text: date"></td>
+		        </tr>     
+		    </tbody>
+		</table>
+		<div style="color: lavender" data-bind="with: chosenMailData">
+		    <div class="mailMessage">
+		        <h1 data-bind="text: subject"></h1>
+		        <p><label>De</label>: <span data-bind="text: from"></span></p>
+		        <p><label>Para</label>: <span data-bind="text: to"></span></p>
+		        <p><label>Data</label>: <span data-bind="text: date"></span></p>
+    		    <p class="message" data-bind="html: messageContent" />
+		    </div>
+		</div>
+		<a class="btn btn-primary" id="botao" href="index.html">Voltar</a>
+    </div>
+</div>
+	
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="bootstrap-3.3.6/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/knockout-3.4.0.js"></script>
+<script type="text/javascript" src="js/fakeData.js"></script>
+
+<script type="text/javascript">
+
+	function WebmailViewModel(){
+		var self = this;
+		self.sections = ['Recebidos', 'Arquivo', 'Enviados', 'Spam'];
+		self.chosenSectionId = ko.observable();
+		self.chosenSectionData = ko.observable();
+		self.chosenMailData = ko.observable();
+
+		self.goToSection = function(section){
+			self.chosenSectionId(section);
+	        self.chosenMailData(null);
+			self.chosenSectionData({ mails: fakeData[section] });
+		}
+		self.goToMail = function(mail){
+	        self.chosenSectionId(mail.folder);
+	        self.chosenSectionData(null);
+	        self.chosenMailData(ko.utils.arrayFirst(fakeData[mail.folder], function(item) {
+                return item.id == mail.id;                                              
+            }));
+	    };
+
+		self.goToSection('Recebidos');
+	}
+	    
+	ko.applyBindings(new WebmailViewModel());
+
+</script>
+</body>
+
+</html>

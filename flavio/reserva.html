@@ -1,0 +1,96 @@
+<!DOCTYPE html> 
+<html lang=pt> 
+
+<head>  
+	<meta charset="utf-8"> 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+	<meta name="viewport" content="width=device-width,initial-scale=1"> 
+	
+	<title>Reservas</title>  
+
+	<link rel="stylesheet" href="bootstrap-3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body id="fundo">
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h1 style="color: aliceblue;">Reservas: (<span data-bind="text: seats().length"></span>)</h1>
+				<button class="btn btn-primary" data-bind="click: addSeat, enable: seats().length < 6">Adicionar reserva</button>
+				<table class="table table-striped">
+				    <thead style="color: aliceblue;">
+				    	<tr>
+					        <th>Nome</th>
+					        <th>Alimento</th>
+					        <th>Preço</th>
+					        <th>Ação</th>
+				    	</tr>
+			    	</thead>				    
+				    <tbody style="background-color: gray;"data-bind="foreach: seats">
+				        <tr>
+				            <td><input class="form-control" data-bind="value: name" /></td>
+				            <td><select class="form-control" data-bind="options: $root.availableMeals, value: meal, optionsText: 'mealName'"></select></td>
+				            <td data-bind="text: formattedPrice"></td>
+				            <td><a href="#" class="btn btn-danger" data-bind="click: $root.removeSeat">Remover</a></td>
+				        </tr>    
+				    </tbody>
+				</table>
+				<h3 style="color: aliceblue;" class="pull-right" data-bind="visible: totalSurcharge() > 0">
+				    Total: R$<span data-bind="text: totalSurcharge().toFixed(2)"></span>
+				</h3>
+			</div>
+		</div>
+		<a class="btn btn-primary" id="botao" href="index.html">Voltar</a>
+	</div>
+	
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="bootstrap-3.3.6/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/knockout-3.4.0.js"></script>
+
+    <script type="text/javascript">
+	function SeatReservation(name, initialMeal) {
+	    var self = this;
+	    self.name = name;
+	    self.meal = ko.observable(initialMeal);
+
+	    self.formattedPrice = ko.computed(function() {
+	        var price = self.meal().price;
+	        return price ? "R$" + price.toFixed(2) : "None";        
+	    });
+	}
+
+	function ReservationsViewModel() {
+		var self = this;
+	    self.availableMeals = [
+	        { mealName: "Pastel de Vento", price: 2 },
+	        { mealName: "X-Tudo", price: 25 },
+	        { mealName: "Bolo de Chocolate", price: 50 }
+	    ];    
+
+	    self.seats = ko.observableArray([
+	        new SeatReservation("Juvensclaudio", self.availableMeals[0]),
+	        new SeatReservation("Ademiro", self.availableMeals[0])
+	    ]);
+	    
+	    self.addSeat = function() {
+	        self.seats.push(new SeatReservation("Juvincleidio", self.availableMeals[0]));
+	    }
+	    self.removeSeat = function(seat){
+        	self.seats.remove(seat);
+    	}
+    	self.totalSurcharge = ko.computed(function() {
+	        var total = 0;
+	        for (var i = 0; i < self.seats().length; i++)
+	            total += self.seats()[i].meal().price;
+	        return total;
+    	});
+	}
+	ko.applyBindings(new ReservationsViewModel());
+	</script>
+
+</body>
+
+</html>
