@@ -1,0 +1,118 @@
+<!DOCTYPE html> 
+<html lang=pt> 
+
+<head>  
+	<meta charset="utf-8"> 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+	<meta name="viewport" content="width=device-width,initial-scale=1"> 
+	
+	<title>Jogo</title>  
+
+    <link rel="stylesheet" href="bootstrap-3.3.6/css/bootstrap.min.css">
+    <style>
+            canvas {
+                border: 1px solid #d3d3d3;
+                background-color: #f1f1f1;
+                padding-left: 2%;
+            }
+    </style>
+
+</head>
+
+<body onload="startGame()">
+        <script>
+                var myGamePiece;
+                var myObstacle;
+                
+                function startGame() {
+                    myGamePiece = new component(30, 30, "carinha.gif", 225, 225, "image");
+                    myObstacle = new component(10, 10, "green", 200, 120);
+                    myGameArea.start();
+                }
+                
+                var myGameArea = {
+                    canvas : document.createElement("canvas"),
+                    start : function() {
+                        this.canvas.width = 1400;
+                        this.canvas.height = 700;
+                        this.context = this.canvas.getContext("2d");
+                        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+                        this.frameNo = 0;
+                        this.interval = setInterval(updateGameArea, 20);
+                        window.addEventListener('keydown', function (e) {
+                            e.preventDefault();
+                            myGameArea.keys = (myGameArea.keys || []);
+                            myGameArea.keys[e.keyCode] = (e.type == "keydown");
+                        })
+                        window.addEventListener('keyup', function (e) {
+                            myGameArea.keys[e.keyCode] = (e.type == "keydown");
+                        })
+                    },
+                    stop : function() {
+                        clearInterval(this.interval);
+                    },    
+                    clear : function() {
+                        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    }
+                }
+                
+                function component(width, height, color, x, y, type) {
+                
+                    this.type = type;
+                    if (type == "image") {
+                    this.image = new Image();
+                    this.image.src = color;
+                    }
+                    this.width = width;
+                    this.height = height;
+                    this.speed = 0;
+                    this.angle = 0;
+                    this.moveAngle = 0;
+                    this.x = x;
+                    this.y = y;    
+                    this.update = function() {
+                        ctx = myGameArea.context;
+                        if (type == "image") {
+                        ctx.drawImage(this.image,
+                        this.x,
+                        this.y,
+                        this.width, this.height);
+                        ctx.save();
+                        ctx.translate(this.x, this.y);
+                        ctx.rotate(this.angle);
+                        ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);                      
+                        ctx.restore();
+                        }else{
+                        ctx.save();
+                        ctx.translate(this.x, this.y);
+                        ctx.rotate(this.angle);
+                        ctx.fillStyle = color;
+                        ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
+                        ctx.restore();    
+                    }
+                    }
+                    this.newPos = function() {
+                        this.angle += this.moveAngle * Math.PI / 180;
+                        this.x += this.speed * Math.sin(this.angle);
+                        this.y -= this.speed * Math.cos(this.angle);
+                    }
+                }
+                
+                function updateGameArea() {
+                    myGameArea.clear();
+                    myObstacle.update();
+                    myGamePiece.moveAngle = 0;
+                    myGamePiece.speed = 0;
+                    if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.moveAngle = -1; }
+                    if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.moveAngle = 1; }
+                    if (myGameArea.keys && myGameArea.keys[38]) {myGamePiece.speed= 1; }
+                    if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speed= -1; }
+                    myGamePiece.newPos();
+                    myGamePiece.update();
+                }
+                </script>
+        
+        <p style='text-align: center; font-size: 350%;'>Joguito</p>
+        
+        </body>
+        </html>
